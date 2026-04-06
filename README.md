@@ -61,15 +61,6 @@ tasks.jar {
 }
 ```
 
-#### Multiple mods using AssetBridge
-
-It is generally safe for multiple mods to bundle AssetBridge in their own jars.
-
-To avoid conflicts:
-- ensure each mod has a unique plugin identifier / asset pack ID
-- prefer using the same AssetBridge version across mods
-- adjust or disable early asset-pack ordering if multiple mods need custom pack positioning
-
 ---
 
 ### Using `hytale-tools` (Recommended)
@@ -77,17 +68,66 @@ To avoid conflicts:
 ``` gradle
 plugins {
     id 'java'
-    id 'com.azuredoom.hytale-tools' version '1.0.15'
+    id 'com.azuredoom.hytale-tools' version '1.0.16'
 }
 ```
 
-You **do NOT need to add the repository manually**.
+When using `hytale-tools`, AssetBridge is integrated automatically.
 
-``` gradle
+You do NOT need to:
+- add the repository
+- declare the dependency
+- configure shading manually
+
+The plugin will:
+- automatically add `com.azuredoom.hytale:hytale-asset-editor-runtime:0.1.0`
+- make it available on your project's `implementation` classpath
+- bundle it into your final jar by default
+- This removes the need for manual shading or fat-jar configuration.
+
+### Disabling bundling
+
+If you do not want AssetBridge bundled into your jar:
+```gradle
+hytaleTools {
+    bundleAssetEditorRuntime = false
+}
+```
+
+When disabled:
+- the dependency is still available at compile/runtime
+- it will not be included inside your final jar
+
+### Overriding the version
+
+You can override the runtime version if needed:
+```gradle
 dependencies {
-    implementation 'com.azuredoom.hytale:hytale-asset-editor-runtime:0.1.0'
+    hytaleBundledRuntime 'com.azuredoom.hytale:hytale-asset-editor-runtime:0.2.0'
 }
 ```
+
+Declaring the dependency manually replaces the plugin’s default.
+
+### When to use manual setup instead
+
+Use the manual dependency + shading approach if:
+- you are not using `hytale-tools`
+- you need full control over shading behavior
+- you are integrating into a custom Gradle setup
+
+Otherwise, using `hytale-tools` is the simplest and recommended approach.
+
+---
+
+### Multiple mods using AssetBridge
+
+It is generally safe for multiple mods to bundle AssetBridge in their own jars.
+
+To avoid conflicts:
+- ensure each mod has a unique plugin identifier / asset pack ID
+- prefer using the same AssetBridge version across mods
+- adjust or disable early asset-pack ordering if multiple mods need custom pack positioning
 
 ---
 
