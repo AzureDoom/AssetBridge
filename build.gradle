@@ -1,0 +1,85 @@
+plugins {
+    id 'idea'
+    id 'java'
+    id 'maven-publish'
+    id 'com.diffplug.spotless' version '8.1.0'
+}
+
+group = 'com.azuredoom.hytale'
+version = '0.1.0'
+
+javadoc {
+    options.addStringOption('Xdoclint:-missing', '-quiet')
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "hytale-release"
+        url = uri("https://maven.hytale.com/release")
+    }
+    maven {
+        name = "hytale-pre-release"
+        url = uri("https://maven.hytale.com/pre-release")
+    }
+}
+
+dependencies {
+    compileOnly("com.hypixel.hytale:Server:2026.03.26-89796e57b")
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+spotless {
+    java {
+        eclipse().configFile("$rootDir/eclipse-formatter.xml")
+        endWithNewline()
+        importOrder("", "java", group.toString(), "\\#")
+        leadingTabsToSpaces(4)
+        removeUnusedImports()
+        trimTrailingWhitespace()
+    }
+}
+
+tasks.build {
+    dependsOn("spotlessApply")
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 25
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "azuremaven"
+            url = "https://maven.azuredoom.com/mods"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            artifactId = "hytale-asset-editor-runtime"
+            from components.java
+        }
+    }
+}
