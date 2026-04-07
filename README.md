@@ -111,7 +111,7 @@ Declaring the dependency manually replaces the plugin’s default.
 
 ### When to use manual setup instead
 
-Use the manual dependency + shading approach if:
+Use the manual dependency plus shading approach if:
 - you are not using `hytale-tools`
 - you need full control over shading behavior
 - you are integrating into a custom Gradle setup
