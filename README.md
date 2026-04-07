@@ -3,7 +3,7 @@
 > Runtime helper for embedding and exposing Hytale Asset Editor packs
 > inside plugins.
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](#)
+[![Version](https://img.shields.io/badge/version-0.2.0-blue)](#)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](#)
 [![License](https://img.shields.io/badge/license-MIT-green)](#)
 [![Hytale](https://img.shields.io/badge/Hytale-Plugin-orange)](#)
@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.azuredoom.hytale:hytale-asset-editor-runtime:0.1.0'
+    implementation 'com.azuredoom.hytale:hytale-asset-editor-runtime:0.2.0'
 }
 ```
 
@@ -80,7 +80,7 @@ You do NOT need to:
 - configure shading manually
 
 The plugin will:
-- automatically add `com.azuredoom.hytale:hytale-asset-editor-runtime:0.1.0`
+- automatically add `com.azuredoom.hytale:hytale-asset-editor-runtime:0.2.0`
 - make it available on your project's `implementation` classpath
 - bundle it into your final jar by default
 - This removes the need for manual shading or fat-jar configuration.
