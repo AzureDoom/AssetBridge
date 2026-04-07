@@ -137,16 +137,24 @@ public final class DefaultAssetEditorPackBridge implements AssetEditorPackBridge
 
         removeLegacyStandaloneAssetPack(assetModule, packId, pluginPackPath);
 
-        AssetPack existingPack = assetModule.getAssetPack(packId);
+        var existingPack = assetModule.getAssetPack(packId);
         if (existingPack != null) {
-            Path existingPackPath = normalizePath(existingPack.getPackLocation());
+            var existingPackPath = normalizePath(existingPack.getPackLocation());
+
             if (!samePath(existingPackPath, pluginPackPath)) {
-                info(
-                    "Replacing pre-registered pack '" + packId + "' from "
-                        + existingPackPath + " with " + pluginPackPath + "."
-                );
-                assetModule.unregisterPack(packId);
-                tryDeleteLegacyAssetsZip(existingPackPath, pluginPackPath);
+                if (isLegacyAssetsZip(existingPackPath)) {
+                    info(
+                            "Replacing legacy pre-registered pack '" + packId + "' from "
+                                    + existingPackPath + " with " + pluginPackPath + "."
+                    );
+                    assetModule.unregisterPack(packId);
+                    tryDeleteLegacyAssetsZip(existingPackPath, pluginPackPath);
+                } else {
+                    debug(
+                            "Keeping existing pack '" + packId + "' at " + existingPackPath
+                                    + " because it is not a legacy assets zip."
+                    );
+                }
             }
         }
 
@@ -240,7 +248,15 @@ public final class DefaultAssetEditorPackBridge implements AssetEditorPackBridge
     }
 
     private int desiredPackIndex(List<AssetPack> packs) {
-        int basePackIndex = indexOfPack(packs, config.baseAssetPackId());
+        var packId = resolvePackId();
+        var basePackId = config.baseAssetPackId();
+
+        if (packId.equals(basePackId)) {
+            debug("baseAssetPackId matches this pack id; leaving current order unchanged.");
+            return indexOfPack(packs, packId);
+        }
+
+        var basePackIndex = indexOfPack(packs, basePackId);
         if (basePackIndex < 0) {
             return 0;
         }
